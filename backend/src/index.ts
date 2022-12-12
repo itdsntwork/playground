@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Response } from "express";
 import dotenv from "dotenv";
 import { DeviceController } from "./controllers/device.controller";
 import { Logger } from "./common/Logger";
@@ -29,7 +29,7 @@ const deviceController = new DeviceController(logger, deviceService);
 const telemetryService = new TelemetryService(wxmClient);
 const telemetryController = new TelemetryController(logger, telemetryService);
 
-app.get("/ping", (req: Request, res: Response) => {
+app.get("/ping", (_, res: Response) => {
   res.send("pong");
 });
 
