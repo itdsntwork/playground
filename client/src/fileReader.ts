@@ -1,9 +1,35 @@
 import fs from "fs";
 import csv from "csv-parser";
+import internal from "stream";
 
-export const readCSV = ({ onRead, onEnd, filePath }: Props) => {
-  fs.createReadStream(filePath).pipe(csv()).on("data", onRead).on("end", onEnd);
-};
+export class FileReader {
+  private filePath: string;
+  private onRead: (data: LineData) => void;
+  private onEnd: () => void;
+  private stream: internal.Transform;
+
+  constructor({ filePath, onRead, onEnd }: Props) {
+    this.filePath = filePath;
+    this.onRead = onRead;
+    this.onEnd = onEnd;
+  }
+
+  public read() {
+    this.stream = fs
+      .createReadStream(this.filePath)
+      .pipe(csv())
+      .on("data", this.onRead)
+      .on("end", this.onEnd);
+  }
+
+  public pause() {
+    this.stream.pause();
+  }
+
+  public resume() {
+    this.stream.resume();
+  }
+}
 
 interface Props {
   onRead: (data: LineData) => void;
